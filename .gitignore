@@ -1,0 +1,5 @@
+#object files
+*.ko
+
+#executables
+*.ksm

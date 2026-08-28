@@ -1,0 +1,59 @@
+.macro CLEARSCREEN
+    push @
+    call #, "clearscreen()"
+    pop
+.endmacro
+
+.macro PRINT
+    push @
+    swap
+    call #, "print()"
+    pop
+.endmacro
+
+.global _start
+
+.func
+_start:
+    bscp 1, 0
+    CLEARSCREEN
+    push "Counting down ..."
+    PRINT
+
+    push 10
+    .countdown_loop:
+    dup
+    push 0
+    clt
+    btr .countdown_end
+    dup
+    push "..."
+    swap
+    add
+    PRINT
+
+    pushv 1
+    wait
+
+    push 1
+    sub
+    jmp .countdown_loop
+
+    .countdown_end:
+
+    push 1.0
+    sto "$throttle"
+
+    push "$up"
+    sto "$steering"
+
+    push @
+    call #, "stage()"
+
+    .infinite:
+    push 0
+    wait
+    jmp .infinite
+
+    escp 1
+    eop

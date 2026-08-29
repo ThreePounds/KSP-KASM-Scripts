@@ -1,0 +1,72 @@
+.func
+printMET:
+    push "["
+    push "$time"
+    gmb  "clock"
+    push "] "
+    add
+    add
+    swap
+    add
+    push @
+    swap
+    call #, "print()"
+    pop
+    argb
+    push 0
+    ret 0
+
+.func
+getSingleInput:
+    argb
+.loop:
+    push "$terminal"
+    gmb  "input"
+    dup
+    stol "$ti"
+    gmb  "haschar"
+    btr  .loop_end
+    push 0
+    wait
+    jmp  .loop
+.loop_end:
+    push "$ti"
+    gmet "getchar"
+    ret 0
+
+.func
+countDownHUDText:
+    bscp 2,1
+    stol "$s"
+    argb
+    push @
+    push "T-00:00:"
+    push "$s"
+    gmb  "tostring"
+    gmet "padleft"
+    push @
+    push 2
+    call #, "<indirect>"
+    gmet "replace"
+    push @
+    push " "
+    push "0"
+    call #, "<indirect>"
+    add
+    call centerHUDText, #
+    ret 1
+
+.func
+centerHUDText:
+    bscp 3,1
+    stol "$s"
+    argb
+    push @
+    push "$s"       ;string
+    push 1.4        ;delay
+    push 2          ;upper_center
+    push 40         ;size
+    push "$green"   ;colour
+    push false
+    call #, "hudtext()"
+    ret 1

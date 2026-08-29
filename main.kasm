@@ -1,59 +1,66 @@
-.macro CLEARSCREEN
-    push @
-    call #, "clearscreen()"
-    pop
-.endmacro
-
-.macro PRINT
-    push @
-    swap
-    call #, "print()"
-    pop
-.endmacro
+.include "main.kasmh"
+.include "io.kasm"
 
 .global _start
 
 .func
 _start:
-    bscp 1, 0
-    CLEARSCREEN
-    push "Counting down ..."
-    PRINT
+    bscp 1,0
+    argb
+    PRINTMET("Launch control and guidance for")
+    push "$ship"
+    gmb  "name"
+    stol "$shipname"
+    PRINTMET("$shipname")
+    PRINTMET("Press [1] to start launch sequence.")
+    PRINTMET("Press [Abort] at any time to stop launch sequence")
 
-    push 10
-    .countdown_loop:
+.inputloop:
+    push @
+    call getSingleInput, #
+    push "1"
+    ceq
+    btr  .inputloop_end
+    push 0
+    wait
+    jmp  .inputloop
+.inputloop_end:
+
+    PRINTMET("Launch Sequence started!")
+    push "Launching in: "
+    push COUNTDOWNDURATION
+    add
+    push " seconds."
+    add
+    stol "$countdownString"
+    PRINTMET("$countdownString")
+
+    push COUNTDOWNDURATION
+.countdownloop:
+    push 1
+    wait
     dup
     push 0
     clt
-    btr .countdown_end
+    btr .countdownloop_end
     dup
-    push "..."
+    push @
     swap
-    add
-    PRINT
-
-    pushv 1
-    wait
-
+    call countDownHUDText, #
+    pop
+    dup
     push 1
     sub
-    jmp .countdown_loop
-
-    .countdown_end:
-
-    push 1.0
-    sto "$throttle"
-
-    push "$up"
-    sto "$steering"
-
-    push @
-    call #, "stage()"
-
-    .infinite:
-    push 0
+    jmp  .countdownloop
+.countdownloop_end:
+    
+    push 1
     wait
-    jmp .infinite
-
+    PRINTMET("Launch!")
+    push @
+    push "Launch!"
+    call centerHUDText, #
+    pop
+    
     escp 1
     eop

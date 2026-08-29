@@ -1,0 +1,8 @@
+.define COUNTDOWNDURATION 10
+
+.macro PRINTMET 1
+    push @
+    push &1
+    call printMET, #
+    pop
+.endmacro

@@ -1,6 +1,6 @@
 TARGET = main.ksm
 
-SRCS = $(wildcard *.kasm)
+SRCS = $(TARGET:.ksm=.kasm)
 OBJS = $(SRCS:.kasm=.ko)
 
 all: $(TARGET)
